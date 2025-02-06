@@ -1,139 +1,160 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Sign up / Login Form</title>
-  <link rel="stylesheet" href="./style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yandex Clicker -Earn Yandex Points!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .click-area {
+            display: inline-block;
+            width: 200px;
+            height: 60px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            margin: 20px auto;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+            transition: transform 0.1s;
+        }
+
+        .click-area:hover {
+            transform: scale(1.05);
+        }
+
+        .stats {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .multiplier-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4444;
+            padding: 8px 16px;
+            border-radius: 5px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .achievements {
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
-  <div class="main">  
-    <!-- Окно выбора роли -->
-    <div class="role-selection" id="roleSelection">
-      <h2>Кто вы?</h2>
-      <button onclick="selectRole('couple')">Молодожены</button>
-      <button onclick="selectRole('manager')">Менеджер</button>
+    <div class="container">
+        <h1>Yandex Clicker - Earn Yandex Points!</h1>
+
+        <div class="stats">
+            <h2>Your Yandex Points (YP): <span id="yp-value">1000</span></h2>
+
+            <p>Earn 10 YP per click! Click the button below to start earning:</p>
+
+            <button class="click-area" onclick="startEarning()">Click Now!</button>
+
+            <div id="multipliers">
+                <h3>Current Multiplier: x1</h3>
+            </div>
+
+            <div class="achievements">
+                <h3>Achievements:</h3>
+                <ul id="achievements-list"></ul>
+            </div>
+        </div>
+
+        <div class="multiplier-indicator" id="multiplier-display"></div>
     </div>
 
-    <!-- Формы регистрации и входа -->
-    <div class="forms" id="forms" style="display: none;">
-      <input type="checkbox" id="chk" aria-hidden="true">
+    <script>
+        let yp = 1000;
+        let multiplier = 1;
+        let passiveIncome = 0;
+        let achievements = [
+            { id: 1, title: 'First Click', value: 1000 },
+            { id: 2, title: 'Double Click', value: 2000 },
+            { id: 3, title: 'Triple Click', value: 3000 }
+        ];
 
-      <div class="signup" id="signup">
-       <form id="signupForm" action="qwe.php" method="POST">
-          <label for="chk" aria-hidden="true">Sign up</label>
-          <div id="coupleFields">
-              <input type="text" name="groomName" placeholder="Имя жениха" required>
-    <input type="text" name="brideName" placeholder="Имя невесты" required>
-    <input type="text" name="phone" placeholder="Телефон" required>
-    <input type="date" name="weddingDate" placeholder="Дата свадьбы" required>
+        function startEarning() {
+            yp += multiplier;
+            updateDisplay();
 
-          </div>
-          <div id="managerFields" style="display: none;">
-            <input type="text" name="managerName" placeholder="Имя менеджера" required disabled>
-          </div>
-          <input type="email" name="email" placeholder="Email" required>
-          <input type="password" name="pswd" placeholder="Пароль" required>
-          <button type="submit">Sign up</button>
-        </form>
-      </div>
-
-      <div class="login" id="login">
-        <form id="loginForm">
-          <label for="chk" aria-hidden="true">Login</label>
-          <input type="email" name="email" placeholder="Email" required>
-          <input type="password" name="pswd" placeholder="Password" required>
-          <div id="managerLoginFields" style="display: none;">
-            <input type="text" name="managerId" placeholder="Уникальный ID" required disabled>
-          </div>
-          <button type="submit">Login</button>
-        </form>
-        <p id="login-error" style="color: red; display: none;">Неверный email, пароль или ID!</p>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let role = '';
-
-    function selectRole(selectedRole) {
-      role = selectedRole;
-      document.getElementById('roleSelection').style.display = 'none';
-      document.getElementById('forms').style.display = 'block';
-
-      if (role === 'manager') {
-        document.getElementById('coupleFields').style.display = 'none';
-        document.querySelectorAll('#coupleFields input').forEach(input => input.disabled = true);
-
-        document.getElementById('managerFields').style.display = 'block';
-        document.querySelector('#managerFields input').disabled = false;
-
-        document.getElementById('managerLoginFields').style.display = 'block';
-        document.querySelector('#managerLoginFields input').disabled = false;
-      } else {
-        document.getElementById('managerFields').style.display = 'none';
-        document.querySelector('#managerFields input').disabled = true;
-
-        document.getElementById('managerLoginFields').style.display = 'none';
-        document.querySelector('#managerLoginFields input').disabled = true;
-
-        document.getElementById('coupleFields').style.display = 'block';
-        document.querySelectorAll('#coupleFields input').forEach(input => input.disabled = false);
-      }
-    }
-
-    // Регистрация: Сохранение данных пользователя
-    document.getElementById('signupForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      if (role === 'couple') {
-        const groomName = this.groomName.value;
-        const brideName = this.brideName.value;
-        const phone = this.phone.value;
-        const weddingDate = this.weddingDate.value;
-        const email = this.email.value;
-        const password = this.pswd.value;
-
-        // Генерация уникального ID
-        const coupleId = `CPL-${Date.now()}`;
-
-        localStorage.setItem('user', JSON.stringify({ 
-          role, groomName, brideName, phone, weddingDate, email, password, coupleId 
-        }));
-
-        window.location.href = 'lk.html';
-      } else if (role === 'manager') {
-        const managerName = this.managerName.value;
-        const email = this.email.value;
-        const password = this.pswd.value;
-
-        localStorage.setItem('user', JSON.stringify({ 
-          role, managerName, email, password, managerId: Date.now() 
-        }));
-
-        window.location.href = 'lkman.html'; // Перенаправление менеджеров
-      }
-    });
-
-    // Авторизация: Проверка email, пароля и ID (для менеджера)
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      const email = this.email.value;
-      const password = this.pswd.value;
-      const managerId = this.managerId?.value;
-      const user = JSON.parse(localStorage.getItem('user'));
-
-      if (user && user.email === email && user.password === password) {
-        if (role === 'manager' && user.managerId !== managerId) {
-          document.getElementById('login-error').style.display = 'block';
-        } else {
-          window.location.href = role === 'manager' ? 'lkman.html' : 'lk.html';
+            if (yp >= 10000) {
+                checkAchievements();
+                passiveIncome = Math.floor(yp * 0.5);
+            } else if (yp >= 5000) {
+                checkAchievements();
+                passiveIncome = Math.floor(yp * 0.3);
+            }
         }
-      } else {
-        document.getElementById('login-error').style.display = 'block';
-      }
-    });
-  </script>
+
+        function buyUpgrade(id, multiplierValue) {
+            switch(id) {
+                case 'double':
+                    yp *= 2;
+                    break;
+                case 'triple':
+                    yp *= 3;
+                    break;
+                case 'passive':
+                    passiveIncome = Math.floor(yp * 0.5);
+                    break;
+            }
+
+            updateDisplay();
+            checkAchievements();
+        }
+
+        function checkAchievements() {
+            achievements.forEach(achievement => {
+                if (yp >= achievement.value) {
+                    achievement.isUnlocked = true;
+                }
+            });
+
+            const unlockedAchievements = achievements.filter(a => a.isUnlocked);
+            document.getElementById('achievements-list').innerHTML =
+                `<h3>Unlocked Achievements: ${unlockedAchievements.length}/${achievements.length}</h3>`;
+        }
+
+        function updateDisplay() {
+            document.getElementById('yp-value').textContent = yp;
+            document.getElementById('multipliers').innerHTML =
+                `Current Multiplier: <span id="current-multiplier">${multiplier}</span>`;
+
+            if (passiveIncome > 0) {
+                document.getElementById('multiplier-display').style.display = 'block';
+                document.getElementById('multiplier-display').textContent =
+                    `Passive Income: ${Math.floor(passiveIncome)} YP/day`;
+            } else {
+                document.getElementById('multiplier-display').style.display = 'none';
+            }
+        }
+
+        // Initial setup
+        updateDisplay();
+        checkAchievements();
+
+        // Check achievements periodically
+        setInterval(checkAchievements, 5000);
+    </script>
 </body>
 </html>
